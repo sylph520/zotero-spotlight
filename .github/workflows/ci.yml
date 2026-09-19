@@ -4,41 +4,52 @@ on:
   push:
     branches:
       - main
+      - dev
+
   pull_request:
     branches:
       - main
+      - dev
+
+permissions:
+  contents: read
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GitHub_TOKEN }}
+
     steps:
       - name: Setup JS
-        uses: zotero-plugin-dev/workflows/setup-js@main
+        uses: zotero-plugin-dev/workflows/setup-js@6bc4563f443313f6cebd3e425ba02f8929fb8d3f # reviewed 2026-09-18
+
       - name: Run Lint
         run: npm run lint:check
 
   build:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GitHub_TOKEN }}
+
     steps:
       - name: Setup JS
-        uses: zotero-plugin-dev/workflows/setup-js@main
+        uses: zotero-plugin-dev/workflows/setup-js@6bc4563f443313f6cebd3e425ba02f8929fb8d3f # reviewed 2026-09-18
+
       - name: Run Build
         run: npm run build
+
       - name: Upload build result
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4, reviewed 2026-09-18
         with:
           name: build-result
           path: .scaffold/build
+          if-no-files-found: error
 
   test:
     runs-on: ubuntu-latest
     needs:
       - build
+
     steps:
       - name: Setup JS
-        uses: zotero-plugin-dev/workflows/setup-js@main
-      - run: npm run test
+        uses: zotero-plugin-dev/workflows/setup-js@6bc4563f443313f6cebd3e425ba02f8929fb8d3f # reviewed 2026-09-18
+
+      - name: Run Tests
+        run: npm test
